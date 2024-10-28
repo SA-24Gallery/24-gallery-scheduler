@@ -1,0 +1,53 @@
+name: Schedule Notify and Delete Orders
+
+on:
+  schedule:
+    - cron: '1 20 * * *'  # 03:01 น. เวลาไทย
+  workflow_dispatch:
+
+jobs:
+  notify-delete:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+          
+      - name: Install dependencies
+        run: |
+          npm install
+          npm install mysql2 dotenv @aws-sdk/client-s3
+          
+      - name: Setup SSL Certificate
+        run: |
+          mkdir -p certs
+          echo "${{ secrets.CA_PEM }}" > certs/ca.pem
+          ls -la certs/
+          cat certs/ca.pem | head -n 5
+        
+      - name: Debug Environment
+        run: |
+          echo "Testing DNS resolution..."
+          nslookup ${{ secrets.DB_HOST }}
+          echo "Testing database port..."
+          nc -zv ${{ secrets.DB_HOST }} ${{ secrets.DB_PORT }} || echo "Port check failed"
+          echo "Current time:"
+          date
+        continue-on-error: true
+
+      - name: Run script
+        env:
+          DB_HOST: ${{ secrets.DB_HOST }}
+          DB_PORT: ${{ secrets.DB_PORT }}
+          DB_USER: ${{ secrets.DB_USER }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          DB_NAME: ${{ secrets.DB_NAME }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: ${{ secrets.AWS_REGION }}
+          AWS_BUCKET_NAME: ${{ secrets.AWS_BUCKET_NAME }}
+        run: node index.js
