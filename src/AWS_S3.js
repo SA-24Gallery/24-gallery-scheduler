@@ -1,4 +1,4 @@
-const { S3Client, ListObjectsV2Command, DeleteObjectsCommand } = require('@aws-sdk/client-s3');
+const { S3Client, ListObjectsV2Command, DeleteObjectsCommand, DeleteObjectCommand } = require('@aws-sdk/client-s3');
 
 class AWS_S3 {
     constructor() {
@@ -44,6 +44,21 @@ class AWS_S3 {
             console.log(`Successfully deleted folder ${folderKey} from S3`);
         } catch (error) {
             console.error(`Error deleting folder for product ${productId} from S3:`, error);
+        }
+    }
+
+    async deleteFile(fileKey) {
+        try {
+            const deleteCommand = new DeleteObjectCommand({
+                Bucket: this.bucket,
+                Key: fileKey
+            });
+
+            await this.s3Client.send(deleteCommand);
+            console.log(`Successfully deleted file ${fileKey} from S3`);
+        } catch (error) {
+            console.error(`Error deleting file ${fileKey} from S3:`, error);
+            throw error;
         }
     }
 }

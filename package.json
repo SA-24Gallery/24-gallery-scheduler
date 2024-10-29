@@ -4,12 +4,13 @@
     "description": "OOP-based project for deleting expired orders",
     "main": "index.js",
     "scripts": {
-      "start": "node index.js"
+        "start": "node index.js"
     },
     "dependencies": {
-      "dotenv": "^16.0.0",
-      "mysql2": "^3.0.0",
-      "@aws-sdk/client-s3": "^3.0.0"
+        "@aws-sdk/client-s3": "^3.0.0",
+        "aws-sdk": "^2.1691.0",
+        "dotenv": "^16.0.0",
+        "mysql2": "^3.0.0",
+        "your-project": "file:"
     }
-  }
-  
+}
