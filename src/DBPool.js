@@ -23,7 +23,7 @@ class DBPool {
         return await this.pool.getConnection();
     }
 
-    async execute(query, params) {
+    async query(query, params) {
         const connection = await this.getConnection();
         try {
             const [results] = await connection.execute(query, params);
